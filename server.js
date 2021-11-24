@@ -15,26 +15,6 @@ const iceServers = {
         {'urls' : 'stun:stun4.l.google.com:19302'},
         {'urls' : 'stun:stun.services.mozilla.com'}
     ]
-    // 'iceServer':[{'username':'1637779197:prj_7D9nqkYM0mZBfBosUe8jaQ',
-    // 'credential':'TRwppwmoTp3tdTQjJ3ff5XZyk70=',
-    // 'url':'turn:globalturn.subspace.com:3478?transport=udp',
-    // 'urls':'turn:globalturn.subspace.com:3478?transport=udp'},
-    // {'username':'1637779197:prj_7D9nqkYM0mZBfBosUe8jaQ',
-    // 'credential':'TRwppwmoTp3tdTQjJ3ff5XZyk70=',
-    // 'url':'turn:globalturn.subspace.com:3478?transport=tcp',
-    // 'urls':'turn:globalturn.subspace.com:3478?transport=tcp'},
-    // {'username':'1637779197:prj_7D9nqkYM0mZBfBosUe8jaQ',
-    // 'credential':'TRwppwmoTp3tdTQjJ3ff5XZyk70=',
-    // 'url':'turns:globalturn.subspace.com:5349?transport=udp',
-    // 'urls':'turns:globalturn.subspace.com:5349?transport=udp'},
-    // {'username':'1637779197:prj_7D9nqkYM0mZBfBosUe8jaQ',
-    // 'credential':'TRwppwmoTp3tdTQjJ3ff5XZyk70=',
-    // 'url':'turns:globalturn.subspace.com:5349?transport=tcp',
-    // 'urls':'turns:globalturn.subspace.com:5349?transport=tcp'},
-    // {'username':'1637779197:prj_7D9nqkYM0mZBfBosUe8jaQ',
-    // 'credential':'TRwppwmoTp3tdTQjJ3ff5XZyk70=',
-    // 'url':'turns:globalturn.subspace.com:443?transport=tcp',
-    // 'urls':'turns:globalturn.subspace.com:443?transport=tcp'}]
 }
 
 var rooms = {}
