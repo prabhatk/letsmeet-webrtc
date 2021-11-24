@@ -13,12 +13,7 @@ const streamConstrains = {
         }
     }
 }
-// const iceServers = {
-//     'iceServer' : [
-//         {'urls' : 'stun:stun2.l.google.com:19302'},
-//         {'urls' : 'stun:stun.services.mozilla.com'}
-//     ]
-// }
+
 let icsServers 
 const offerOptions = {
     offerToReceiveAudio: 1,
