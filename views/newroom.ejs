@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="shortcut icon" href="#">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>videoChatApp</title>
+        <link rel="stylesheet" href="newStyle.css" />
+        <script src="/socket.io/socket.io.js"></script>
+        <script>const ROOM_ID = "<%= roomId %>"</script>
+        <script src="https://kit.fontawesome.com/c939d0e917.js"></script>
+    </head>
+    <body>
+    <div class = "headertitle">
+      <h3>Welcome :: <%= nameId %> :: <%= roomId %><h3>
+    </div>
+    <div class = "mainsection">
+          <div class = "videosection">
+            
+            <div class = "activevideo">
+                <video id = "activevideo" autoplay></video>
+            </div>
+
+            <div class = "videolist" id = "videolist" >
+            </div>
+
+          </div>
+          <!--<div class = "usersection">
+            <p>chat Section<p>
+          </div>-->
+  </div>
+  <div class = "mainsection">
+    <div class = "calloptions">
+       
+       <div class = "calloptionsbuttons"> 
+        <i id = "callbutton" class = "fa fa-phone-slash"> </i>
+       </div>
+       
+       <div class = "calloptionsbuttons"> 
+        <i id = "mutebutton" class = "fa fa-microphone"> </i>
+       </div>
+
+       <div class = "calloptionsbuttons"> 
+        <i id = "camerabutton" class = "fa fa-video"> </i>
+       </div>
+       
+    </div>
+    <!--<div class = "usersoptions">
+      <p> user options </p>
+    </div>-->
+  </div>
+  </body>
+
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>  
+<script src="utils.js"></script>
+<script src="main.js"></script>
+</html>

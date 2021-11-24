@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>videoChatApp</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="/socket.io/socket.io.js"></script>
+        <script>const ROOM_ID = "<%= roomId %>"</script>
+        <script src="https://kit.fontawesome.com/c939d0e917.js"></script>
+    </head>
+<body>
+    <p class ="roomid">Room Id is : <%= roomId %></p>
+    <div class = "container" >
+        <div class= "videoContainer">
+
+            <div class = "activeVoiceVideoContainer">
+                 <video id="activeVoiceVideo" autoplay></video>
+            </div>
+           
+            <div id = "videoListContainer" class = "videoListContainer">
+
+            </div>
+
+            <div class="options">
+                <div class="options__center">
+                    <div id = "option_elements" class="options__center">
+                        <div id = "stopVideo" class = "options__button__disconnect">
+                            <i id = "videobtn" class = "fa fa-phone-slash"> </i>
+                        </div>
+
+                        <div id = "muteButton" class = "options__button">
+                            <i id = "videobtn" class = "fa fa-microphone"> </i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class = "containerUserList">
+            <ol id = "otherUserList" >
+            </ol>
+        </div>
+
+    </div>
+    
+</body>
+
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>  
+<script src="utils.js"></script>
+<script src="main.js"></script>
+</html>
