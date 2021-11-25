@@ -1,3 +1,15 @@
+
+function setActiveStreamFor() {
+    console.log('video id',this.id)
+    let toBeActiveVideoElement = document.getElementById(this.id)
+    if(toBeActiveVideoElement) {
+        const activeVideoElement = document.getElementById('activevideo')
+        activeVideoElement.srcObject = null
+        activeVideoElement.srcObject = toBeActiveVideoElement.srcObject
+        activeVideoElement.volume = 0 
+        activeVideoElement.muted = true
+    }
+}
 function addVideoElement(userId, stream, iscaller) {
     const videoElement = getVideoElement(userId, iscaller)
     videoElement.srcObject = stream
@@ -5,6 +17,7 @@ function addVideoElement(userId, stream, iscaller) {
     const videoContainer = document.getElementById('videolist')
     videoContainer.appendChild(videoElement)
     console.log('video Container', videoContainer)
+    videoElement.addEventListener('click', setActiveStreamFor)
 }
 function setActiveVideo(stream) {    
     const videoElement = document.getElementById('activevideo')
