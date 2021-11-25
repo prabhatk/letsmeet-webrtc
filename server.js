@@ -7,7 +7,7 @@ const {v4 :  uuidv4} = require('uuid')
 const MAX_USERS = 10
 const port = process.env.PORT || 3000
 
-const iceServers = {
+var iceServers = {
     iceServers: [
       {   
         urls: [ "stun:bn-turn1.xirsys.com" ]
@@ -42,12 +42,17 @@ app.get('/logout', (req, res) => {
 app.get('/room', (req, res) => {
     res.render('newroom', {roomId: req.query.roomId, nameId: req.query.nameId})
 })
-// app.post('/:room', (req, res) => {
-//     console.log(req.params)
-//     // res.render('newroom', {roomId: req.params.room})
-//     res.render('newroom', {roomId: req.params.room, nameId: req.params.nameId})
-// })
 
+// const accountSid = 'AC077a643439348bf51d452adf37837538'//process.env.TWILIO_ACCOUNT_SID;
+// const authToken = '4e21eaac6c00953830cf666cf6b50369'//process.env.TWILIO_AUTH_TOKEN;
+// const client = require('twilio')(accountSid, authToken);
+// client.tokens.create().then(token => {
+//     console.log('twilio working')
+//     iceServers.iceServers = token.iceServers    
+//     console.log(iceServers)
+// }).catch(e => {
+//     console.log('twilio failed',e)
+// });
 
 server.listen(port, () => {
     console.log('server is listning on port', port)

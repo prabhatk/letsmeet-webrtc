@@ -1,5 +1,5 @@
-function addVideoElement(userId, stream) {
-    const videoElement = getVideoElement(userId)
+function addVideoElement(userId, stream, iscaller) {
+    const videoElement = getVideoElement(userId, iscaller)
     videoElement.srcObject = stream
     console.log('video Element', videoElement)
     const videoContainer = document.getElementById('videolist')
@@ -9,6 +9,8 @@ function addVideoElement(userId, stream) {
 function setActiveVideo(stream) {    
     const videoElement = document.getElementById('activevideo')
     videoElement.srcObject = stream
+    videoElement.volume = 0 
+    videoElement.muted = true
 }
 
 function removeVideoElement(userId) {
@@ -20,7 +22,7 @@ function removeVideoElement(userId) {
     }
 }
 
-function getVideoElement(userId) {
+function getVideoElement(userId, iscaller) {
     let videoElement = document.getElementById(userId)
     if(videoElement) {
         console.log('[VIDEO ELEMENT] : ALREADY EXIST')
@@ -30,9 +32,13 @@ function getVideoElement(userId) {
         videoElement = document.createElement('video')
         videoElement.setAttribute('id', userId)
         videoElement.setAttribute('class', "usersvideo")
-        videoElement.setAttribute('webkit-playsinline', 'webkit-playsinline');
-        videoElement.muted = true
+        videoElement.setAttribute('playsinline', '')
+        videoElement.playsInline = true
+        videoElement.muted = 0
         videoElement.autoplay = true
+    }
+    if (iscaller) {
+        videoElement.volume = 0
     }
     return videoElement
 }

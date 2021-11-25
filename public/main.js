@@ -44,7 +44,7 @@ socket.on('room-created', async roomId => {
     await navigator.mediaDevices.getUserMedia(streamConstrains).then( stream => {
         localStream = stream
         streams[socket.id] = localStream
-        addVideoElement(socket.id, streams[socket.id])
+        addVideoElement(socket.id, streams[socket.id],true)
         setActiveVideo(streams[socket.id])
     }).catch(err => {
         console.log('[ROOM-CREATED] : An error occured while fetching user media devices.', err)
@@ -57,7 +57,7 @@ socket.on('joined', async roomId => {
     await navigator.mediaDevices.getUserMedia(streamConstrains).then( stream => {
         localStream = stream
         streams[socket.id] = localStream
-        addVideoElement(socket.id, streams[socket.id])
+        addVideoElement(socket.id, streams[socket.id], true)
         setActiveVideo(streams[socket.id])
         socket.emit('ready', {roomId, userId : socket.id})
     }).catch(err => {
@@ -121,7 +121,7 @@ function createPeerConnection(servers, stream, userId) {
         rtcPeerConnection.ontrack = function onAddStream(event) {
             console.log('[REMOTE STREAM] : ', userId, event.streams[0])
             streams[userId] = event.streams[0]
-            addVideoElement(userId, streams[userId])
+            addVideoElement(userId, streams[userId], userId === socket.id)
         }
         rtcPeerConnection.onicecandidate = async function onIceCandidate(event) {
             if(event.candidate) {
