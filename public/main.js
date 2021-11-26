@@ -1,5 +1,5 @@
 const socket = io('/')
-
+var isCameraEnabled = true
 const streamConstrains = {
     audio : true,
     video: {
@@ -12,6 +12,9 @@ const streamConstrains = {
             "max": "160"
         }
     }
+}
+const streamConstrainsOnlyAudio = {
+    audio : true
 }
 
 let icsServers 
@@ -180,11 +183,27 @@ function disconnectcall() {
     window.location.replace('/logout')
     
 }
-function videoenabledisable() {
+async function videoenabledisable() {
+    
     let cameraButtonElement = document.getElementById('camerabutton')
     let videoTrack = localStream.getVideoTracks()[0]
     let videoStatus = videoTrack.enabled
     videoTrack.enabled = !videoStatus
+    console.log('videoStatus',videoStatus)
+    if(isCameraEnabled) {
+        videoTrack.stop()
+        await navigator.mediaDevices.getUserMedia(streamConstrainsOnlyAudio).then( stream => {
+            replaceWithNewStream(rtcPeerConnections, stream)
+        })
+        isCameraEnabled = !isCameraEnabled
+    } else {
+        await navigator.mediaDevices.getUserMedia(streamConstrains).then( stream => {
+            localStream = stream
+            replaceWithNewStream(rtcPeerConnections, stream)
+            addVideoElement(socket.id,localStream, true)
+        })
+        isCameraEnabled = !isCameraEnabled
+    }
     console.log('cameraButton', cameraButtonElement)
     if(videoTrack.enabled) {
         cameraButtonElement.classList.add('fa-video')
@@ -193,6 +212,4 @@ function videoenabledisable() {
         cameraButtonElement.classList.add('fa-video-slash')
         cameraButtonElement.classList.remove('fa-video')
     }
-    cameraButtonElement.reload()
-    console.log('video status', videoStatus, content)
 }

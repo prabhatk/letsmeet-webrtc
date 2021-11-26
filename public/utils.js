@@ -72,3 +72,13 @@ function stopAllConnections(connections) {
         connection.close()
     }
 }
+
+function replaceWithNewStream(connections, stream) {
+    for (var key in connections) {
+        let connection = connections[key]
+        connection.getSenders().forEach(sender => {
+            console.log('sender',sender, 'type of stream', stream)
+            sender.replaceTrack(stream.getVideoTracks()[0])
+        });
+    }
+}
