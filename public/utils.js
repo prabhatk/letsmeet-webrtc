@@ -1,12 +1,12 @@
 
 function setActiveStreamFor() {
-    console.log('video id',this.id)
+    console.log('video id', this.id)
     let toBeActiveVideoElement = document.getElementById(this.id)
-    if(toBeActiveVideoElement) {
+    if (toBeActiveVideoElement) {
         const activeVideoElement = document.getElementById('activevideo')
         activeVideoElement.srcObject = null
         activeVideoElement.srcObject = toBeActiveVideoElement.srcObject
-        activeVideoElement.volume = 0 
+        activeVideoElement.volume = 0
         activeVideoElement.muted = true
     }
 }
@@ -19,16 +19,16 @@ function addVideoElement(userId, stream, iscaller) {
     console.log('video Container', videoContainer)
     videoElement.addEventListener('click', setActiveStreamFor)
 }
-function setActiveVideo(stream) {    
+function setActiveVideo(stream) {
     const videoElement = document.getElementById('activevideo')
     videoElement.srcObject = stream
-    videoElement.volume = 0 
+    videoElement.volume = 0
     videoElement.muted = true
 }
 
 function removeVideoElement(userId) {
     const videoElement = getVideoElement(userId)
-    if(videoElement) {
+    if (videoElement) {
         videoElement.srcObject = null
         const videoContainer = document.getElementById('videolist')
         videoContainer.removeChild(videoElement)
@@ -37,7 +37,7 @@ function removeVideoElement(userId) {
 
 function getVideoElement(userId, iscaller) {
     let videoElement = document.getElementById(userId)
-    if(videoElement) {
+    if (videoElement) {
         console.log('[VIDEO ELEMENT] : ALREADY EXIST')
     }
     else {
@@ -77,8 +77,31 @@ function replaceWithNewStream(connections, stream) {
     for (var key in connections) {
         let connection = connections[key]
         connection.getSenders().forEach(sender => {
-            console.log('sender',sender, 'type of stream', stream)
+            console.log('sender', sender, 'type of stream', stream)
             sender.replaceTrack(stream.getVideoTracks()[0])
+            sender.replaceTrack(stream.getAudioTracks()[0])
         });
+    }
+}
+
+function setCameraButtonUI(enabled) {
+    let cameraButtonElement = document.getElementById('camerabutton')
+    if (enabled) {
+        cameraButtonElement.classList.add('fa-video')
+        cameraButtonElement.classList.remove('fa-video-slash')
+    } else {
+        cameraButtonElement.classList.add('fa-video-slash')
+        cameraButtonElement.classList.remove('fa-video')
+    }
+}
+
+function serMicButtonUI(enabled) {
+    let muteButtonElement = document.getElementById('mutebutton')
+    if (enabled) {
+        muteButtonElement.classList.add('fa-microphone')
+        muteButtonElement.classList.remove('fa-microphone-slash')
+    } else {
+        muteButtonElement.classList.add('fa-microphone-slash')
+        muteButtonElement.classList.remove('fa-microphone')
     }
 }

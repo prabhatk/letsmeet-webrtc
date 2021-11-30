@@ -1,7 +1,7 @@
 const socket = io('/')
 var isCameraEnabled = true
 const streamConstrains = {
-    audio : true,
+    audio: true,
     video: {
         "width": {
             "min": "120",
@@ -14,10 +14,10 @@ const streamConstrains = {
     }
 }
 const streamConstrainsOnlyAudio = {
-    audio : true
+    audio: true
 }
 
-let icsServers 
+let icsServers
 const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1
@@ -42,12 +42,12 @@ callElement.addEventListener('click', disconnectcall)
 cameraElement.addEventListener('click', videoenabledisable)
 
 socket.on('room-created', async roomId => {
-    console.log('[WHO AM I] : ',socket.id)
+    console.log('[WHO AM I] : ', socket.id)
     console.log('[ROOM-CREATED] : ', roomId)
-    await navigator.mediaDevices.getUserMedia(streamConstrains).then( stream => {
+    await navigator.mediaDevices.getUserMedia(streamConstrains).then(stream => {
         localStream = stream
         streams[socket.id] = localStream
-        addVideoElement(socket.id, streams[socket.id],true)
+        addVideoElement(socket.id, streams[socket.id], true)
         setActiveVideo(streams[socket.id])
     }).catch(err => {
         console.log('[ROOM-CREATED] : An error occured while fetching user media devices.', err)
@@ -55,14 +55,14 @@ socket.on('room-created', async roomId => {
 })
 
 socket.on('joined', async roomId => {
-    console.log('[WHO AM I] : ',socket.id)
+    console.log('[WHO AM I] : ', socket.id)
     console.log('[JOINED] ', roomId)
-    await navigator.mediaDevices.getUserMedia(streamConstrains).then( stream => {
+    await navigator.mediaDevices.getUserMedia(streamConstrains).then(stream => {
         localStream = stream
         streams[socket.id] = localStream
         addVideoElement(socket.id, streams[socket.id], true)
         setActiveVideo(streams[socket.id])
-        socket.emit('ready', {roomId, userId : socket.id})
+        socket.emit('ready', { roomId, userId: socket.id })
     }).catch(err => {
         console.log('[JOINED] : An error occured while fetching user media devices.')
     })
@@ -70,20 +70,20 @@ socket.on('joined', async roomId => {
 
 socket.on('ready', async event => {
     console.log('[READY] ', event.roomId)
-    if(rtcPeerConnections[event.userId] == undefined) {
+    if (rtcPeerConnections[event.userId] == undefined) {
         console.log(iceServers)
         let rtcPeerConnection = createPeerConnection(iceServers, localStream, event.userId)
-        await rtcPeerConnection.createOffer(offerOptions).then (sessionDescription => {
+        await rtcPeerConnection.createOffer(offerOptions).then(sessionDescription => {
             rtcPeerConnection.setLocalDescription(sessionDescription)
             socket.emit('offer', {
-                type : 'offer',
-                sdp : sessionDescription,
-                roomId : ROOM_ID,
-                userId : socket.id,
-                target : event.userId
+                type: 'offer',
+                sdp: sessionDescription,
+                roomId: ROOM_ID,
+                userId: socket.id,
+                target: event.userId
 
             })
-        }).catch ( err => {
+        }).catch(err => {
             console.log(err)
         })
     }
@@ -91,20 +91,20 @@ socket.on('ready', async event => {
 
 socket.on('offer', async event => {
     console.log('[OFFER] : from', event.userId, 'to', socket)
-    if(rtcPeerConnections[event.userId] == undefined) {
-        let rtcPeerConnection = createPeerConnection(iceServers,localStream, event.userId)
+    if (rtcPeerConnections[event.userId] == undefined) {
+        let rtcPeerConnection = createPeerConnection(iceServers, localStream, event.userId)
         rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp))
-        await rtcPeerConnection.createAnswer().then (sessionDescription => {
+        await rtcPeerConnection.createAnswer().then(sessionDescription => {
             rtcPeerConnection.setLocalDescription(sessionDescription)
             socket.emit('answer', {
-                type : 'answer',
-                sdp : sessionDescription,
-                roomId : ROOM_ID,
-                userId : socket.id,
-                target : event.userId
+                type: 'answer',
+                sdp: sessionDescription,
+                roomId: ROOM_ID,
+                userId: socket.id,
+                target: event.userId
             })
-        }).catch ( err => {
-            console.log('[OFFER] : ',err)
+        }).catch(err => {
+            console.log('[OFFER] : ', err)
         })
     }
 })
@@ -116,7 +116,7 @@ socket.on('answer', event => {
 })
 
 function createPeerConnection(servers, stream, userId) {
-    if(rtcPeerConnections[userId]) {
+    if (rtcPeerConnections[userId]) {
         console.log('[PEERCONNECTION] : ALREADY-EXIST :', userId)
         return rtcPeerConnections[userId]
     } else {
@@ -127,21 +127,21 @@ function createPeerConnection(servers, stream, userId) {
             addVideoElement(userId, streams[userId], userId === socket.id)
         }
         rtcPeerConnection.onicecandidate = async function onIceCandidate(event) {
-            if(event.candidate) {
+            if (event.candidate) {
                 console.log('[SENDING-ICE-CANDIDATE] : ')
                 socket.emit('candidate', {
-                    type : 'candidate',
-                    label : event.candidate.sdpMLineIndex,
-                    id : event.candidate.sdpMid,
-                    candidate : event.candidate,
-                    roomId : ROOM_ID,
-                    userId : socket.id,
-                    target : userId
-                })  
-            }    
+                    type: 'candidate',
+                    label: event.candidate.sdpMLineIndex,
+                    id: event.candidate.sdpMid,
+                    candidate: event.candidate,
+                    roomId: ROOM_ID,
+                    userId: socket.id,
+                    target: userId
+                })
+            }
         }
         stream.getTracks().forEach(track => {
-            console.log('[GET TRACKS]:',userId, track)
+            console.log('[GET TRACKS]:', userId, track)
             rtcPeerConnection.addTrack(track, stream)
         });
         rtcPeerConnections[userId] = rtcPeerConnection
@@ -162,18 +162,10 @@ socket.on('user-left', userId => {
 })
 
 function muteunmute() {
-    let muteButtonElement = document.getElementById('mutebutton')
     let audioTrack = localStream.getAudioTracks()[0]
     let muteStatus = audioTrack.enabled
     audioTrack.enabled = !muteStatus
-    
-    if(audioTrack.enabled) {
-        muteButtonElement.classList.add('fa-microphone')
-        muteButtonElement.classList.remove('fa-microphone-slash')
-    } else {
-        muteButtonElement.classList.add('fa-microphone-slash')
-        muteButtonElement.classList.remove('fa-microphone')
-    }
+    serMicButtonUI(audioTrack.enabled)
     console.log('mute status', muteStatus)
 }
 function disconnectcall() {
@@ -181,35 +173,33 @@ function disconnectcall() {
     stopAllVideos(streams)
     stopAllConnections(rtcPeerConnections)
     window.location.replace('/logout')
-    
+
 }
 async function videoenabledisable() {
-    
-    let cameraButtonElement = document.getElementById('camerabutton')
     let videoTrack = localStream.getVideoTracks()[0]
-    let videoStatus = videoTrack.enabled
-    videoTrack.enabled = !videoStatus
-    console.log('videoStatus',videoStatus)
-    if(isCameraEnabled) {
+    let audioTrack = localStream.getAudioTracks()[0]
+    console.log(videoTrack?.enabled, audioTrack?.enabled)
+    if (isCameraEnabled) {
         videoTrack.stop()
-        await navigator.mediaDevices.getUserMedia(streamConstrainsOnlyAudio).then( stream => {
-            replaceWithNewStream(rtcPeerConnections, stream)
-        })
-        isCameraEnabled = !isCameraEnabled
-    } else {
-        await navigator.mediaDevices.getUserMedia(streamConstrains).then( stream => {
+        await navigator.mediaDevices.getUserMedia(streamConstrainsOnlyAudio).then(stream => {
             localStream = stream
+            let newAudioTrack = localStream.getAudioTracks()[0]
+            newAudioTrack.enabled = audioTrack?.enabled
             replaceWithNewStream(rtcPeerConnections, stream)
-            addVideoElement(socket.id,localStream, true)
         })
-        isCameraEnabled = !isCameraEnabled
-    }
-    console.log('cameraButton', cameraButtonElement)
-    if(videoTrack.enabled) {
-        cameraButtonElement.classList.add('fa-video')
-        cameraButtonElement.classList.remove('fa-video-slash')
     } else {
-        cameraButtonElement.classList.add('fa-video-slash')
-        cameraButtonElement.classList.remove('fa-video')
+        await navigator.mediaDevices.getUserMedia(streamConstrains).then(stream => {
+            localStream = stream
+            let newAudioTrack = localStream.getAudioTracks()[0]
+            newAudioTrack.enabled = audioTrack?.enabled
+            let newVideoTrack = localStream.getVideoTracks()[0]
+            newVideoTrack.enabled = true//videoTrack?.enabled
+            replaceWithNewStream(rtcPeerConnections, stream)
+            addVideoElement(socket.id, localStream, true)
+            setCameraButtonUI(videoTrack?.enabled)
+        })
     }
+    isCameraEnabled = !isCameraEnabled
+    videoTrack = localStream.getVideoTracks()[0]
+    setCameraButtonUI(videoTrack?.enabled)
 }
