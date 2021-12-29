@@ -79,7 +79,9 @@ function replaceWithNewStream(connections, stream) {
         connection.getSenders().forEach(sender => {
             console.log('sender', sender, 'type of stream', stream)
             sender.replaceTrack(stream.getVideoTracks()[0])
-            sender.replaceTrack(stream.getAudioTracks()[0])
+            if (stream.getAudioTracks()[0]) {
+                sender.replaceTrack(stream.getAudioTracks()[0])
+            }
         });
     }
 }
@@ -104,4 +106,20 @@ function serMicButtonUI(enabled) {
         muteButtonElement.classList.add('fa-microphone-slash')
         muteButtonElement.classList.remove('fa-microphone')
     }
+}
+
+function createNewTracks(stream, userId, rtcPeerConnections, audioTrackEnabled) {
+    // console.log('audioTrackEnabled', audioTrackEnabled)
+    // // let newAudioTrack = stream.getAudioTracks()[0]
+    // // console.log('newAudioTrack1', newAudioTrack)
+    // // // newAudioTrack?.enabled = audioTrackEnabled
+    // // console.log('newAudioTrack2', newAudioTrack)
+    // let newVideoTrack = stream.getVideoTracks()[0]
+    // newVideoTrack.enabled = true
+    let audioTrack = stream.getAudioTracks()[0]
+    let muteStatus = audioTrackEnabled
+    // audioTrack.enabled = true
+    console.log('createNewTracks', audioTrack, muteStatus)
+    replaceWithNewStream(rtcPeerConnections, stream)
+    addVideoElement(userId, stream, true)
 }

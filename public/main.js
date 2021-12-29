@@ -1,5 +1,5 @@
 const socket = io('/')
-var isCameraEnabled = true
+var features = audio | video
 const streamConstrains = {
     audio: true,
     video: {
@@ -36,10 +36,12 @@ socket.on('servers', servers => {
 let muteElement = document.getElementById('mutebutton')
 let callElement = document.getElementById('callbutton')
 let cameraElement = document.getElementById('camerabutton')
+let sharescreenElement = document.getElementById('screensharebutton')
 
 muteElement.addEventListener('click', muteunmute)
 callElement.addEventListener('click', disconnectcall)
 cameraElement.addEventListener('click', videoenabledisable)
+sharescreenElement.addEventListener('click', sharescreenenabledisable)
 
 socket.on('room-created', async roomId => {
     console.log('[WHO AM I] : ', socket.id)
@@ -165,7 +167,7 @@ function muteunmute() {
     let audioTrack = localStream.getAudioTracks()[0]
     let muteStatus = audioTrack.enabled
     audioTrack.enabled = !muteStatus
-    serMicButtonUI(audioTrack.enabled)
+    serMicButtonUI(audioTrack?.enabled)
     console.log('mute status', muteStatus)
 }
 function disconnectcall() {
@@ -176,30 +178,58 @@ function disconnectcall() {
 
 }
 async function videoenabledisable() {
+    turnfeatureOnOff(video)
+}
+async function sharescreenenabledisable() {
+    turnfeatureOnOff(screenshare)
+}
+async function turnfeatureOnOff(option) {
     let videoTrack = localStream.getVideoTracks()[0]
     let audioTrack = localStream.getAudioTracks()[0]
-    console.log(videoTrack?.enabled, audioTrack?.enabled)
-    if (isCameraEnabled) {
-        videoTrack.stop()
+    let audioTrackEnabled = audioTrack?.enabled
+    if ((features & option) === option) {
+        videoTrack?.stop()
+        localStream.removeTrack(videoTrack)
+        features = features - (features & option)
         await navigator.mediaDevices.getUserMedia(streamConstrainsOnlyAudio).then(stream => {
             localStream = stream
             let newAudioTrack = localStream.getAudioTracks()[0]
-            newAudioTrack.enabled = audioTrack?.enabled
+            newAudioTrack.enabled = audioTrackEnabled
             replaceWithNewStream(rtcPeerConnections, stream)
+            createNewTracks(localStream, socket.id, rtcPeerConnections, audioTrackEnabled)
         })
     } else {
-        await navigator.mediaDevices.getUserMedia(streamConstrains).then(stream => {
-            localStream = stream
-            let newAudioTrack = localStream.getAudioTracks()[0]
-            newAudioTrack.enabled = audioTrack?.enabled
-            let newVideoTrack = localStream.getVideoTracks()[0]
-            newVideoTrack.enabled = true//videoTrack?.enabled
-            replaceWithNewStream(rtcPeerConnections, stream)
-            addVideoElement(socket.id, localStream, true)
-            setCameraButtonUI(videoTrack?.enabled)
-        })
+        if (option === video) {
+            if ((features & screenshare) === screenshare) {
+                videoTrack?.stop()
+                features = features - (features & screenshare)
+            }
+            features = features | video
+            await navigator.mediaDevices.getUserMedia(streamConstrains).then(stream => {
+                if (localStream.getVideoTracks()[0]) { localStream.removeTrack(localStream.getVideoTracks()[0]) }
+                localStream.addTrack(stream.getVideoTracks()[0])
+                createNewTracks(localStream, socket.id, rtcPeerConnections, audioTrackEnabled)
+                setCameraButtonUI(videoTrack?.enabled)
+            }).catch(e => {
+                console.log(option, e)
+            })
+        } else if (option === screenshare) {
+            if ((features & video) === video) {
+                videoTrack.stop()
+                features = features - (features & video)
+            }
+            features = features | screenshare
+            await navigator.mediaDevices.getDisplayMedia({ video: true }).then(stream => {
+                if (localStream.getVideoTracks()[0]) { localStream.removeTrack(localStream.getVideoTracks()[0]) }
+                localStream.addTrack(stream.getVideoTracks()[0])
+                createNewTracks(localStream, socket.id, rtcPeerConnections, audioTrackEnabled)
+                // setCameraButtonUI(videoTrack?.enabled)
+            }).catch(e => {
+                console.log(option, e)
+            })
+        }
     }
-    isCameraEnabled = !isCameraEnabled
     videoTrack = localStream.getVideoTracks()[0]
     setCameraButtonUI(videoTrack?.enabled)
+    console.log('features', features)
 }
